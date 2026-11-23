@@ -6,6 +6,15 @@
 - **查看 LaTeX 源码：** [translation.tex](translation.tex)
 - **下载原始交付工程包：** [Erdos650_中文翻译工程.zip](releases/Erdos650_中文翻译工程.zip)
 
+## 高中生证明详解
+
+另附六章中文讲义，逐步展开匹配的亏损公式、上下界证明、开区间端点与整数取整，并配有完整的数值例子。这是原论文证明的教学展开。
+
+- **阅读讲义 PDF：** [Erdos650_高中生证明详解.pdf](highschool-proof/Erdos650_高中生证明详解.pdf)
+- **查看讲义 LaTeX 源码：** [Erdos650_高中生证明详解.tex](highschool-proof/Erdos650_高中生证明详解.tex)
+- **阅读与编译说明：** [README.txt](highschool-proof/README.txt)
+- **下载完整讲义工程：** [Erdos650_高中生证明详解工程.zip](releases/Erdos650_高中生证明详解工程.zip)
+
 ## 原论文
 
 **Wouter van Doorn, Yanyang Li, Quanyu Tang**  
@@ -65,3 +74,4 @@ python3 verify.py
 | `README.txt` | 原始工程说明 |
 | `CHECKS.txt` | 校对记录、已完成检查及未验证范围 |
 | `releases/Erdos650_中文翻译工程.zip` | 与原始交付完全一致的工程压缩包 |
+

@@ -1,0 +1,9 @@
+{
+  "special_branch_element_checks": 41080,
+  "ordinary_branch_element_checks": 961040,
+  "upper_bound_example": "passed",
+  "six_number_example": "passed",
+  "rounding_integer_checks": 10000,
+  "status": "PASS",
+  "scope": "Finite exact-arithmetic checks only; not an independent formal proof."
+}
