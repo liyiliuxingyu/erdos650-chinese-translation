@@ -1,0 +1,23 @@
+# LaTeX build intermediates (keep the delivered PDF and editable source).
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.nav
+*.out
+*.run.xml
+*.snm
+*.synctex.gz
+*.toc
+*.xdv
+
+# Python intermediates and editor/OS files.
+__pycache__/
+*.py[cod]
+.DS_Store
+Thumbs.db
+*~
+*.swp

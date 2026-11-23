@@ -1,0 +1,564 @@
+% !TeX program = xelatex
+% Complete Chinese translation of the user-supplied arXiv:2603.28636v1.
+% Translation edition: 2026-11-22. Source text, theorem and equation numbering retained.
+\documentclass[UTF8,a4paper,oneside,openany,fontset=fandol,zihao=-4]{ctexbook}
+\usepackage[top=22mm,bottom=22mm,left=22mm,right=22mm,headheight=15pt]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+\usepackage{xurl}
+\usepackage[unicode,hidelinks]{hyperref}
+\setmainfont{Latin Modern Roman}
+\setsansfont{Latin Modern Sans}
+\setmonofont{Latin Modern Mono}[Scale=MatchLowercase]
+\hypersetup{
+  pdftitle={关于将整数匹配到互异倍数的一个 Erdős 问题的最优界（完整中文译本）},
+  pdfauthor={Wouter van Doorn; Yanyang Li; Quanyu Tang},
+  pdfsubject={arXiv:2603.28636v1 中文翻译},
+  pdfkeywords={Erdős 650,整数倍数,匹配,Hall 定理,Lean}
+}
+\setlength{\emergencystretch}{2em}
+\setlist[itemize]{nosep,leftmargin=2em,topsep=0.4em}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+\renewcommand{\sectionmark}[1]{\markboth{#1}{#1}}
+\renewcommand{\proofname}{证明}
+\renewcommand{\bibname}{参考文献}
+\newtheoremstyle{chinesestyle}{0.65em}{0.65em}{\normalfont}{}{
+  \bfseries}{。}{0.5em}{}
+\theoremstyle{chinesestyle}
+\newtheorem{theorem}{定理}[section]
+\newtheorem{remark}[theorem]{注}
+\newtheorem{lemma}[theorem]{引理}
+\newtheorem{claim}[theorem]{断言}
+\newcommand{\leanmark}{\ensuremath{\checkmark\!\checkmark}}
+\newcommand{\translationnote}[1]{\par\noindent\textbf{译者说明：}#1\par}
+\allowdisplaybreaks[1]
+
+\begin{document}
+\begin{titlepage}
+\centering
+\vspace*{20mm}
+{\zihao{2}\bfseries 关于将整数匹配到互异倍数的\par
+一个 Erd\H{o}s 问题的最优界\par}
+\vspace{12mm}
+{\Large Optimal bounds for an Erd\H{o}s problem on matching integers to distinct multiples\par}
+\vspace{15mm}
+{\large Wouter van Doorn\par Yanyang Li\par Quanyu Tang\par}
+\vspace{16mm}
+{\Large 完整中文译本\par}
+\vspace{7mm}
+{\large 原文：arXiv:2603.28636v1 [math.CO]\par}
+\vspace{3mm}
+{\large 原文发布日期：2026 年 3 月 30 日\par}
+\vfill
+{译制日期：2026 年 11 月 22 日\par}
+\end{titlepage}
+
+\frontmatter
+\chapter*{译者说明}
+\addcontentsline{toc}{chapter}{译者说明}
+
+本译本以用户提供的 \texttt{2603.28636v1.pdf} 为唯一翻译底本。全文翻译摘要、正文第~1--5~节、全部证明、3 条原文脚注、16 条参考文献及作者地址；保留原文公式编号 (1)--(4)、定理与引理编号、数学符号及链接。参考文献保留原始著录，并附题名的中文释义。中文重新分页，因此本译本页码与英文原文不一一对应。
+
+作者在正文中使用的“我们”，以及关于证明来源和形式化工作的陈述，均按原文译出。\leanmark{} 标记沿用原文，表示作者报告相应证明已在 Lean 4 中形式化；本次翻译核对了文字和公式，但未下载或重新运行文献 [6] 的 Lean 工程。第~5~节所述的文件行数、定义数、引理数、定理数及软件版本，均为原文记载。
+
+为忠实保留底本，正文未静默改写原文中以下两处不够精确的说明；阅读时请注意其适用范围。
+
+\begin{enumerate}[label=\arabic*.,leftmargin=2em,itemsep=0.65em]
+\item 第~2~节及第~4~节开头把式 (2) 概括为对所有 $S\subseteq A$ 证明
+\[
+|\Gamma(S)|\geq2\sqrt{|S|}.
+\]
+当 $x\in a_m\mathbb Z$ 且 $S=\{a_m\}$ 时，开区间 $(x,x+2a_m)$ 中仅有 $x+a_m$ 这一个 $a_m$ 的倍数，因而 $|\Gamma(S)|=1<2$。第~4~节的实际论证已单独处理这一端点情形：先在删去 $a_m$ 和 $b_0$ 后的图 $G_0$ 上建立相应邻域界，再加回一条匹配边。因此，应结合该节的分类处理理解前面的概述。
+\item 断言~3.2 的证明把 $2v_p(q)>v_p(q)$ 的依据写为 $q\ne0$。这里的直接依据是该分支已经假设 $v_p(q)\geq1$。译文保留原句，并在此说明。
+\end{enumerate}
+
+\clearpage
+\tableofcontents
+\clearpage
+\mainmatter
+\chapter*{摘要}
+\markboth{摘要}{摘要}
+\addcontentsline{toc}{chapter}{摘要}
+
+设 $f(m)$ 为满足下述条件的最大整数：对于任意一个由 $m$ 个正整数组成的集合 $A=\{a_1<\cdots<a_m\}$，以及任意长度为 $2a_m$ 的开区间 $I$，都至少存在 $f(m)$ 个互不相交的配对 $(a,b)$，其中 $a\in A$、$b\in I$，并且 $a\mid b$。这里配对所用的 $a$ 彼此不同，所用的整数 $b$ 也彼此不同。我们解决了 Erd\H{o}s 的一个问题，精确确定了 $f(m)$，证明对所有 $m$ 都有
+\[
+\boxed{f(m)=\min\bigl(m,\lceil2\sqrt m\rceil\bigr).}
+\]
+这一证明通过 AI 辅助的工作流程获得：首先由 ChatGPT 提出证明策略，随后由 Aristotle 将具体论证补充为完全严谨的证明，并在 Lean 中完成形式化验证。本文呈现的阐述与最终证明完全由人类撰写。
+
+\medskip
+\noindent\textbf{2020 数学主题分类：}主要分类 11B75；次要分类 05C70、05C35。
+
+\smallskip
+\noindent\textbf{关键词：}组合数论；区间中的倍数；Hall 婚配定理；Erd\H{o}s 问题。
+
+\section{引言}\label{sec:introduction}
+
+对每个正整数 $m$，令 $f(m)$ 表示具有如下性质的最大整数 $r$：只要
+\[
+A=\{a_1<a_2<\cdots<a_m\}
+\]
+是一个由 $m$ 个正整数组成的集合，那么对于每个实数 $x$，都存在互不相同的元素 $c_1,\ldots,c_r\in A$ 和互不相同的整数 $b_1,\ldots,b_r$，使得
+\[
+x<b_i<x+2a_m,
+\qquad c_i\mid b_i
+\qquad (1\leq i\leq r).
+\]
+
+Erd\H{o}s 和 Sur\'{a}nyi 在 1959 年的论文~\cite{ref10} 中证明了关于 $f(m)$ 的第一个结果，得到了下界 $f(m)\geq\sqrt m$。另一方面，Erd\H{o}s 和 Selfridge~\cite{ref7,ref8} 证明，对所有 $m$ 都有 $f(m^2)\leq 2m$；由此可以推出一般的上界 $f(m)\leq 2\lceil\sqrt m\rceil$。因此，关于 $f(m)$ 的已知下界与上界相差一个因子 $2$，人们自然会问：它的确切增长率是什么？Erd\H{o}s 在文献~\cite{ref9} 中特别提出，下界能否改进；如今，估计 $f(m)$ 的问题被列为 Bloom 网站上的 Erd\H{o}s 第 650 号问题~\cite{ref2}。本文精确确定了 $f(m)$，从而完全解决了这一问题。
+
+退一步看，人们也许会问：为什么在 $f(m)$ 的定义中，将区间长度取为 $2a_m$ 是自然的？首先，如果把区间长度改为 $ca_m$，其中 $1<c<2$，那么相应定义的 $f(m)$ 实际上将对每个正整数 $m$ 都等于 $1$。事实上，这样的区间一定包含一个能被 $a_1$ 整除的整数，从而得到下界 $f(m)\geq1$。对于相应的上界，可以选取一个充分大的整数 $M$，令 $A=\{a_1,a_2,\ldots,a_m\}$，其中每个 $a_i=M+i$，并取
+\[
+x=-a_1+\prod_{i=1}^{m}a_i.
+\]
+如果相对于 $c$ 和 $m$ 而言，$M$ 足够大，那么可以验证：当 $1<c<2$ 时，区间 $(x,x+ca_m)$ 中，唯一能被 $A$ 中某个元素整除的整数是 $x+a_1$。另一方面，对于 $c\geq3$，Erd\H{o}s 在文献~\cite{ref7,ref8} 中写道，此时“局面便完全失控了”（all hell breaks loose）。对于这样的 $c$，究竟应当预期什么还不清楚；不过，文献~\cite{ref8} 记载了一个简短论证，表明任意长度为 $3a_m$ 的区间，都包含多于 $\sqrt{6m}$ 个作为这些 $a_i$ 的倍数的不同整数。最后，尽管我们在定义 $f(m)$ 时采用了长度为 $2a_m$ 的区间，本文的结果实际上覆盖整个中间范围 $2\leq c<3$。事实上，与文献~\cite{ref7,ref8} 类似，我们将看到：即使把 $2$ 增大为任意小于 $3$ 的实数，我们的证明仍然成立。
+
+为了更好地理解 $f(m)$，用图论语言重新表述其定义是方便的。记 $\mathbb N=\{1,2,3,\ldots\}$ 为正整数集；给定集合 $A\subseteq\mathbb N$（其中 $|A|=m$ 且 $\max A=a_m$）和实数 $x$。令 $B=(x,x+2a_m)\cap\mathbb Z$，定义二部图 $G(A,x)$，其两个顶点集为 $A$ 和 $B$；每当 $a\mid b$ 时，就在 $a\in A$ 与 $b\in B$ 之间连一条边。用 $F(A,x)$ 表示 $G(A,x)$ 中最大匹配的大小，则
+\[
+f(m)=\min_{|A|=m}\min_{x\in\mathbb R}F(A,x),
+\]
+其中外层的最小值取遍所有含有 $m$ 个元素的集合 $A\subseteq\mathbb N$。这一观点对于下界的证明尤其重要。
+
+\subsection{AI 辅助的证明发现与形式化验证}
+
+本文的一个突出特点，是获得并验证证明所采用的工作流程。最初的证明草稿由 ChatGPT（模型：GPT-5.4 Pro）生成。\footnote{GPT 是 OpenAI 开发的大语言模型；有关 GPT-5 系列的背景，见文献~\cite{ref14}。}这份草稿正确地找到了主要的证明策略，但在一个具体论证中留下了缺口。有关这一阶段的公开记录，可在 Erd\H{o}s 第 650 号问题的讨论帖中找到，见文献~\cite{ref3}。随后，这份证明草稿被交给 Aristotle，\footnote{Aristotle 是 Harmonic 开发的用于形式化数学推理的 AI 系统，见文献~\cite{ref1}；其项目页面见文献~\cite{ref11}。}后者补全了缺失的细节，并给出了该证明的完整 Lean 形式化。为使过程透明，早期的证明草稿以及随后指出其中缺口的一则札记均已公开，见文献~\cite{ref15,ref16}。关于形式化过程的更多信息，见第~5~节。
+
+这个例子提示了一种可能的研究流程：主要利用大语言模型进行证明搜索以及整体证明思路的发现，再利用形式推理系统，把所得论证转化为完全严谨且经过机器检验的证明。这样的流程并不会完全取代人的判断。例如，原始证明过于冗长，经人工重写后，其篇幅缩短了约一半。不过，它能够显著降低证明正确性对于传统逐行人工检查的依赖程度。
+
+\subsection{论文结构}
+
+第~2~节陈述主要结果，并说明如何由分别建立的上界和下界推出精确公式。第~3~节证明上界：对于任意乘积 $m=st$，构造一个含有 $m$ 个整数的集合 $A$，以及一个长度为 $2\max A$ 的区间，使其中出现的互异倍数至多有 $s+t$ 个。第~4~节利用 Hall 定理的一个推广，并仔细分析相关二部图中邻域的大小，建立与上界相符的下界。最后，第~5~节简要记录我们如何在 Lean 中获得该论证的形式化验证。
+
+\section{主要结果的陈述与推导}\label{sec:main-result}
+
+我们证明的主要结果如下。\footnote{全文中，符号 \leanmark{} 表示相应陈述的证明已在 Lean 4 中完成形式化。}
+
+\begin{theorem}\label{thm:exact}
+\leanmark{} 对每个正整数 $m$，都有
+\[
+f(m)=\min\bigl(m,\lceil 2\sqrt m\rceil\bigr).
+\]
+\end{theorem}
+
+\begin{remark}\label{rem:ge4}
+\leanmark{} 对所有 $m\geq 4$，都有 $\lceil 2\sqrt m\rceil\leq m$，因此定理~\ref{thm:exact} 特别蕴含：对所有 $m\geq 4$，都有 $f(m)=\lceil 2\sqrt m\rceil$。
+\end{remark}
+
+由 $f(m)$ 的定义可直接得到上界 $f(m)\leq m$。因此，定理~\ref{thm:exact} 的证明自然分为两部分：一方面证明对所有 $m$ 都成立的上界 $f(m)\leq\lceil 2\sqrt m\rceil$，另一方面证明下界 $f(m)\geq\min(m,\lceil 2\sqrt m\rceil)$。
+
+对于上界，给定正整数 $s$ 和 $t$，我们构造一个满足 $|A|=st$ 的特定集合 $A$，以及一个长度为 $2\max A$ 的开区间 $I$，使得 $I$ 中作为 $A$ 中元素的倍数的不同整数至多有 $s+t$ 个。特别地，相应二部图中的任何匹配，其大小都不超过 $s+t$，所以
+\begin{equation}
+f(st)\leq s+t.\tag{1}\label{eq:product}
+\end{equation}
+
+为了由此推出对每个 $m$ 都有 $f(m)\leq\lceil 2\sqrt m\rceil$，取满足 $k^2<m\leq(k+1)^2$ 的 $k$。若
+\[
+k^2<m\leq\left(k+\frac12\right)^2,
+\]
+则 $m\leq k(k+1)$，且 $\lceil 2\sqrt m\rceil=2k+1$。由于 $f(m)$ 关于 $m$ 单调不减（事实上，总可以转而考虑一个子集），我们有 $f(m)\leq f(k(k+1))$。在界~\eqref{eq:product} 中取 $s=k$、$t=k+1$，得到
+\[
+f(m)\leq f(k(k+1))\leq 2k+1=\lceil 2\sqrt m\rceil.
+\]
+如果
+\[
+\left(k+\frac12\right)^2<m\leq(k+1)^2,
+\]
+则 $\lceil 2\sqrt m\rceil=2k+2$。此时在~\eqref{eq:product} 中取 $s=t=k+1$，同样可得
+\[
+f(m)\leq f((k+1)^2)\leq 2k+2=\lceil 2\sqrt m\rceil.
+\]
+
+我们指出，界~\eqref{eq:product} 比 Erd\H{o}s 和 Selfridge 此前证明的界 $f(m^2)\leq 2m$~\cite{ref7,ref8} 略强。事实上，他们的界给出 $f(m)\leq 2\lceil\sqrt m\rceil$，这一般弱于 $f(m)\leq\lceil 2\sqrt m\rceil$。尽管这两个估计至多相差 $1$，但在精确确定 $f(m)$ 时，这个差别自然就有了意义。
+
+对于下界，我们构造第~1~节中引入的二部图。回顾一下：对于子集 $S\subseteq A$，$S$ 的邻域 $\Gamma(S)\subseteq B$ 定义为 $B$ 中所有与 $S$ 的某个元素有边相连的顶点组成的集合。我们将使用 Hall 定理的如下推广（见文献~\cite[习题~16.2.8(b)]{ref4}）。
+
+\begin{lemma}\label{lem:hall}
+\leanmark{} 对任意顶点集分别为 $A$ 和 $B$ 的有限二部图，都存在一个大小为
+\[
+\min\left\{|A|,\ |A|-\max_{\varnothing\ne S\subseteq A}
+\bigl(|S|-|\Gamma(S)|\bigr)\right\}
+\]
+的匹配，其中内部的最大值取遍所有非空子集 $S\subseteq A$。
+\end{lemma}
+
+\par\noindent\textbf{注.} 如文献~\cite{ref4} 所述，上述表达式有时也称为 K\"onig--Ore 公式，通常写成更简洁的形式
+\[
+|A|-\max_{S\subseteq A}\bigl(|S|-|\Gamma(S)|\bigr),
+\]
+其中最大值取遍所有子集 $S\subseteq A$。单独考虑空集，即可看出这与我们采用的形式等价。
+
+借助引理~\ref{lem:hall}，我们断言，只要证明对于所有 $S\subseteq A$ 都有
+\begin{equation}
+|\Gamma(S)|\geq 2\sqrt{|S|},\tag{2}\label{eq:neighbor}
+\end{equation}
+就能推出所需的不等式。为说明这一条件为何足够，注意到 $t-2\sqrt t$ 在 $\mathbb N$ 上是一个递增函数，这是因为对所有 $t\geq 1$，都有
+\[
+2\sqrt{t+1}-2\sqrt t<1.
+\]
+由于 $|A|=m$，不等式~\eqref{eq:neighbor} 因而蕴含：对于所有非空子集 $S\subseteq A$，都有
+\[
+|S|-|\Gamma(S)|\leq |S|-2\sqrt{|S|}\leq m-2\sqrt m.
+\]
+于是，由引理~\ref{lem:hall} 可知，存在一个大小至少为 $\min(m,2\sqrt m)$ 的匹配。由于 $f(m)$ 是整数，这确实蕴含 $f(m)\geq\min(m,\lceil 2\sqrt m\rceil)$。为了证明~\eqref{eq:neighbor}，我们先把任意一个长度为 $2\max A$ 的区间分成两半，然后构造一个从 $S$ 到 $\Gamma(S)$ 分处这两半的两个部分之笛卡尔积的单射，从而得到 $|\Gamma(S)|$ 所需的下界。
+
+\section{上界}\label{sec:upper-bound}
+
+如第~2~节所述，对于上界，只需证明下面这个含两个参数的不等式。
+
+\begin{theorem}\label{thm:upper}
+\leanmark{} 对所有正整数 $s$ 和 $t$，都有 $f(st)\leq s+t$。
+\end{theorem}
+
+\begin{proof}
+若 $\min(s,t)=1$，则上界 $f(st)\leq st<s+t$ 直接成立。因此，以下假设 $s,t\geq 2$；由对称性，还可以进一步假设 $s\leq t$。如第~2~节所述，我们现在的目标是构造一个含有 $st$ 个元素的集合 $A$，使得存在一个长度为 $2\max A$ 的区间，其中作为 $A$ 中元素的倍数的整数至多有 $s+t$ 个。
+
+为了构造 $A$，令 $D$ 为整数 $1,2,\ldots,st$ 的最小公倍数，并进一步定义
+\[
+\mathcal P:=\left\{p>st:\ \begin{array}{l}
+p\text{ 是素数，且存在整数 }q,r\text{ 满足}\\
+0<|q|<s,\ |r|<t,\text{ 使 }p\mid(q+rD)
+\end{array}\right\}.
+\]
+满足 $0<|q|<s$ 和 $|r|<t$ 的整数对 $(q,r)$ 只有有限多个；对于每个这样的整数对，整数 $q+rD$ 非零，因而只有有限多个素因子。所以集合 $\mathcal P$ 是有限集。
+
+现在，对于每个 $p\in\mathcal P$，考虑剩余类 $-i-jD\pmod p$，其中整数 $i$ 和 $j$ 分别取遍 $1\leq i\leq s$ 和 $1\leq j\leq t$。特别地，这样的剩余类 $-i-jD\pmod p$ 至多有 $st$ 个。由于 $p>st$，这些剩余类并未穷尽模 $p$ 的所有剩余类。因此，由中国剩余定理可知，存在一个整数 $M>2s+2tD$，使得对于所有 $p\in\mathcal P$ 以及所有 $i,j$，都有
+\[
+M\not\equiv-i-jD\pmod p.
+\]
+利用这个 $M$，定义
+\[
+\alpha_{i,j}:=M+i+jD,
+\qquad
+A:=\{\alpha_{i,j}:1\leq i\leq s,\ 1\leq j\leq t\}.
+\]
+为说明 $A$ 中各个 $\alpha_{i,j}$ 互不相同（从而 $|A|=st$），注意到 $\alpha_{i,j}=\alpha_{k,l}$ 蕴含 $D\mid(k-i)$。由于 $|k-i|<s<D$，故 $i=k$，进而 $j=l$。此外，我们还有如下断言。
+
+\begin{claim}\label{claim:gcd}
+\leanmark{} 对任意满足 $1\leq i,k\leq s$ 和 $1\leq j,l\leq t$ 的指标 $(i,j)$ 与 $(k,l)$，都有
+\[
+\gcd(\alpha_{i,j},\alpha_{k,l})\mid(i-k).
+\]
+\end{claim}
+
+\begin{proof}
+由于每个整数都整除 $0$，不妨假设 $i\ne k$。令 $g:=\gcd(\alpha_{i,j},\alpha_{k,l})$，并以 $v_p(\cdot)$ 表示 $p$ 进赋值。我们的目标是证明：对 $g$ 的每个素因子 $p$，都有 $v_p(g)\leq v_p(i-k)$。
+
+为此，任取 $g$ 的一个素因子 $p$，并定义 $q:=i-k\ne0$ 和 $r:=j-l$。由于 $p\mid\alpha_{i,j}$ 且 $\alpha_{i,j}-\alpha_{k,l}=q+rD$，我们有
+\[
+M\equiv-i-jD\pmod p,
+\qquad
+p\mid(q+rD).
+\]
+因为 $0<|q|<s$ 且 $|r|<t$，若 $p>st$，则由 $\mathcal P$ 的定义可知 $p\in\mathcal P$，这与 $M$ 的选取矛盾。因此 $p\leq st$；我们断言，这蕴含 $v_p(D)>v_p(q)$。
+
+由于 $p\leq st$ 且 $D=\operatorname{lcm}(1,2,\ldots,st)$，所以 $v_p(D)>0$。因此，当 $v_p(q)=0$ 时，不等式 $v_p(D)>v_p(q)$ 成立。另一方面，若 $v_p(q)\geq1$，注意到 $q^2\mid D$，因为 $q^2<s^2\leq st$。于是，在这种情形下有
+\[
+v_p(D)\geq v_p(q^2)=2v_p(q)>v_p(q),
+\]
+其中最后一个不等式使用了 $q\ne0$。因此，两种情形下确实都有 $v_p(D)>v_p(q)$，由此得到 $v_p(q+rD)=v_p(q)$。由于 $g\mid(q+rD)$，现在可得
+\[
+v_p(g)\leq v_p(q+rD)=v_p(q).
+\]
+这对每个素数 $p$ 都成立，故 $g$ 确实整除 $q=i-k$。
+\end{proof}
+
+根据广义中国剩余定理（见文献~\cite[定理~3.12]{ref12}），只要对于所有 $i,j,k,l$，剩余数之差 $i-k$ 都能被 $\gcd(\alpha_{i,j},\alpha_{k,l})$ 整除，就存在一个整数 $x_0$，使得对所有 $\alpha_{i,j}\in A$，都有 $x_0\equiv i\pmod{\alpha_{i,j}}$。这一条件恰好就是断言~\ref{claim:gcd} 的内容，因此这样的 $x_0$ 确实存在。
+
+现在定义 $x:=x_0-M$ 以及 $I:=(x,x+2\max A)$。我们断言，对于每个固定的指标对 $(i,j)$，$I$ 中至多有两个 $\alpha_{i,j}$ 的倍数。为此，首先注意：由 $x_0$ 的构造，整数 $x_0-i$ 是 $\alpha_{i,j}$ 的倍数。由于 $\alpha_{i,j}$ 的各个倍数构成公差为 $\alpha_{i,j}$ 的等差数列，所以只需证明
+\[
+(x_0-i)-\alpha_{i,j}<x,
+\qquad
+(x_0-i)+2\alpha_{i,j}>x+2\max A.
+\]
+事实上，一方面，
+\begin{align*}
+(x_0-i)-\alpha_{i,j}
+&=x+M-i-(M+i+jD)\\
+&=x-2i-jD\\
+&<x.
+\end{align*}
+另一方面，
+\begin{align*}
+(x_0-i)+2\alpha_{i,j}
+&=x+M-i+2(M+i+jD)\\
+&=x+3M+i+2jD\\
+&>x+3M\\
+&>x+2M+2s+2tD\\
+&=x+2\max A.
+\end{align*}
+因此，位于 $I$ 中的任何 $\alpha_{i,j}$ 的倍数，都只能是
+\[
+x_0-i
+\qquad\text{或}\qquad
+x_0-i+\alpha_{i,j}=x_0+M+jD.
+\]
+特别地，位于 $I$ 中且为 $A$ 中某个元素的倍数的每个整数，都属于
+\[
+\{x_0-i:1\leq i\leq s\}\cup\{x_0+M+jD:1\leq j\leq t\}.
+\]
+由于后一个集合至多有 $s+t$ 个元素，证明完成。
+\end{proof}
+
+\begin{remark}\label{rem:longer-interval}
+\leanmark{} 任取 $\epsilon\in(0,1)$，并回顾我们之前选取了 $M>2s+2tD$。若改为选取
+\[
+M>\epsilon^{-1}(3-\epsilon)(s+tD),
+\]
+那么即使将 $I$ 扩大为 $(x,x+(3-\epsilon)\max A)$，上述证明仍然适用。
+\end{remark}
+
+\section{下界}
+
+现在证明 $f(m)$ 的下界。
+
+\begin{theorem}\label{thm:lower}
+\leanmark{} 对每个正整数 $m$，都有
+\[
+  f(m)\geq \min\bigl(m,\lceil 2\sqrt m\rceil\bigr).
+\]
+\end{theorem}
+
+\begin{proof}
+固定 $m\in\mathbb N$，并设 $A=\{a_1<\cdots<a_m\}$ 是任意一个由 $m$ 个正整数组成的集合。此外，对任意实数 $x$，定义区间 $I:=(x,x+2a_m)$。如第 2 节所述，令 $B:=I\cap\mathbb Z$，并令 $G$ 为相应的二部图，其两个顶点集分别为 $A$ 和 $B$；只需对固定但任意的子集 $S\subseteq A$ 证明不等式 \eqref{eq:neighbor}。为此，需要区分 $x$ 是 $a_m$ 的整数倍与不是整数倍这两种情形。
+
+\medskip
+\noindent\textbf{情形 1：$x\notin a_m\mathbb Z$。}
+考虑划分 $B=B_-\sqcup B_+$，其中
+\[
+  B_-:=(x,x+a_m]\cap\mathbb Z,
+  \qquad
+  B_+:=(x+a_m,x+2a_m)\cap\mathbb Z,
+\]
+并定义
+\[
+  \Gamma_-(S):=\Gamma(S)\cap B_-,
+  \qquad
+  \Gamma_+(S):=\Gamma(S)\cap B_+.
+\]
+由于 $\Gamma_-(S)$ 与 $\Gamma_+(S)$ 共同构成 $\Gamma(S)$ 的一个划分，因此
+\begin{equation}
+  |\Gamma(S)|=|\Gamma_-(S)|+|\Gamma_+(S)|.
+  \tag{3}\label{eq:partition}
+\end{equation}
+此外，我们断言
+\begin{equation}
+  |S|\leq |\Gamma_-(S)|\,|\Gamma_+(S)|.
+  \tag{4}\label{eq:injection}
+\end{equation}
+为说明这一点，对每个 $a\in S$，令 $u_a$ 为$B_-$ 中最大的 $a$ 的倍数。由于 $a\leq a_m$，这样的 $u_a$ 一定存在。此外，由 $u_a$ 的定义以及 $x$ 不是 $a_m$ 的整数倍这一假设可知，$u_a+a$ 是包含在 $B_+$ 中的一个 $a$ 的倍数。现在考虑函数
+\[
+  \phi:S\longrightarrow \Gamma_-(S)\times\Gamma_+(S),
+  \qquad
+  \phi(a):=(u_a,u_a+a).
+\]
+由于两个坐标之差恰好为 $a$，该映射是单射，从而得到 \eqref{eq:injection}。将 \eqref{eq:partition}、\eqref{eq:injection} 与算术平均数--几何平均数不等式结合，即可完成这一情形的证明，因为此时有
+\[
+\begin{aligned}
+  |S|
+    &\leq |\Gamma_-(S)|\,|\Gamma_+(S)|\\
+    &\leq \frac{\bigl(|\Gamma_-(S)|+|\Gamma_+(S)|\bigr)^2}{4}\\
+    &=\frac{|\Gamma(S)|^2}{4},
+\end{aligned}
+\]
+这就推出了 \eqref{eq:neighbor}。
+
+\medskip
+\noindent\textbf{情形 2：$x\in a_m\mathbb Z$。}
+在这种情形下，定义 $b_0:=x+a_m$，并令 $G_0$ 为 $G$ 的子图，其两个顶点集为 $A_0:=A\setminus\{a_m\}$ 和 $B_0:=B\setminus\{b_0\}$。仍按前面的方式定义 $B_-$ 和 $B_+$，并定义 $\widetilde B_-:=B_-\setminus\{b_0\}$。对 $S\subseteq A_0$，现在用 $\Gamma_0(S)$ 表示它在 $G_0$ 中的邻域，并令
+\[
+  \widetilde\Gamma_-(S):=\Gamma_0(S)\cap\widetilde B_-,
+  \qquad
+  \widetilde\Gamma_+(S):=\Gamma_0(S)\cap B_+.
+\]
+与情形 1 类似，只需对每个子集 $S\subseteq A_0$ 找到一个单射
+\[
+  \phi:S\longrightarrow
+    \widetilde\Gamma_-(S)\times\widetilde\Gamma_+(S).
+\]
+事实上，这样的函数将推出与 \eqref{eq:injection} 相对应的不等式，进而得到 $|\Gamma_0(S)|\geq 2\sqrt{|S|}$。随后，由引理 \ref{lem:hall} 可知，$G_0$ 中存在一个大小至少为 $\min(m-1,2\sqrt{m-1})$ 的匹配。再加入边 $a_m\sim b_0$，便在原图 $G$ 中得到一个大小至少为
+\[
+  \min\bigl(m-1,2\sqrt{m-1}\bigr)+1
+    \geq \min\bigl(m,2\sqrt m\bigr)
+\]
+的匹配，从而完成证明。
+
+因此，固定一个子集 $S\subseteq A_0$，并对每个 $a\in S$，再次令 $u_a$ 为$B_-$ 中最大的 $a$ 的倍数。若 $a\nmid b_0$，则称 $a$ 属于类型 (T1)，并与前面一样定义 $\phi(a)=(u_a,u_a+a)$。若 $a$ 整除 $b_0$，则注意到 $u_a=b_0$。在这种情况下，若进一步有 $2a<a_m$ 且 $2a\nmid b_0$，则称 $a$ 属于类型 (T2)，并定义 $\phi(a)=(u_a-2a,u_a+2a)$。最后，若 $a\mid b_0$，但满足 $2a\geq a_m$ 或 $2a\mid b_0$，则称 $a$ 属于类型 (T3)，并定义 $\phi(a)=(u_a-a,u_a+a)$。根据这些定义，可直接验证
+\[
+  \phi(S)\subseteq
+    \widetilde\Gamma_-(S)\times\widetilde\Gamma_+(S),
+\]
+因此只需证明 $\phi$ 是单射。
+
+首先，对于属于类型 (T1)、(T2)、(T3) 的元素 $a$，两个坐标之差分别为 $a$、$4a$、$2a$，所以，当不同的 $a,a'\in S$ 属于同一类型时，一定有 $\phi(a)\neq\phi(a')$。因此，采用反证法，假设 $a$ 与 $a'$ 属于不同类型，且 $\phi(a)=\phi(a')$。注意，这意味着二者中至少有一个是 $b_0$ 的约数，因而 $b_0$ 恰好是两个坐标的平均值。
+
+先假设 $a$ 属于类型 (T1)，$a'$ 属于类型 (T2)。根据两个坐标之差，$\phi(a)=\phi(a')$ 推出 $a=4a'$。特别地，由于 $u_a$ 是 $a$ 的倍数，$u_a$ 必能被 $2a'$ 整除。然而，这给出
+\[
+  b_0=u_a+\frac a2
+    =2a'\left(\frac{u_a}{2a'}\right)+2a'
+    =2a'\left(\frac{u_a}{2a'}+1\right),
+\]
+这与 $a'$ 属于类型 (T2) 所要求的 $2a'\nmid b_0$ 矛盾。
+
+接着，假设 $a$ 属于类型 (T1)，$a'$ 属于类型 (T3)。此时，$\phi(a)=\phi(a')$ 推出 $a=2a'$。由于 $2a'=a<a_m$，再根据 $a'$ 属于类型 (T3) 这一假设，可得 $2a'\mid b_0$。这同样导致矛盾，因为
+\[
+  b_0=u_a+\frac a2
+    =2a'\cdot\frac{u_a}{2a'}+a'
+    =a'\left(2\cdot\frac{u_a}{2a'}+1\right),
+\]
+是 $a'$ 的奇数倍。
+
+最后，假设 $a$ 属于类型 (T2)，$a'$ 属于类型 (T3)。则 $\phi(a)=\phi(a')$ 推出 $a'=2a$，而 $a'$ 属于类型 (T3)，故 $a'\mid b_0$。但这与 $2a\nmid b_0$ 矛盾。
+
+反向的类型排列具有对称性，因此不同类型的元素不可能映到同一个点。由此，$\phi$ 确为单射，证明完毕。
+\end{proof}
+
+\section{Lean 形式化}
+\label{sec:lean}
+
+我们使用 Harmonic 的自动定理证明工具 Aristotle，得到了本文所有结果的形式化证明。这一形式化过程中有一个颇有意思的现象：直到形式化已经完成之后，我们才发现 ChatGPT 生成的原始证明草稿中存在一个缺口。这个缺口随后得到了修补，而本文呈现的是修正后的论证。更确切地说，经过仔细检查，我们发现：对于下界证明中情形~2 所定义的映射
+\[
+  \phi\colon S\longrightarrow
+  \widetilde{\Gamma}_{-}(S)\times\widetilde{\Gamma}_{+}(S),
+\]
+ChatGPT 最初提出的构造并不是单射。这当然令人担忧，同时也令人困惑，因为形式化证明当时已经完成了。
+
+于是，我们不得不把 Lean 证明重新译回非形式化的数学语言，以弄清楚究竟发生了什么。结果发现，Aristotle 不仅注意到了这一缺口，而且还成功地为 $\phi$ 找到了一个确实行得通的变体！因此，我们在第~4~节证明定理~4.1 时实际采用的，正是 Aristotle 对 $\phi$ 的定义。
+
+关于随附的 Lean 文件\cite{ref6}，其文件头记录了以下元数据：
+\begin{itemize}
+  \item Lean 版本：\path{leanprover/lean4:v4.28.0}；
+  \item Mathlib 版本：\path{8f9d9cff6bd728b17a24e163c9402775d9e6a365}；
+  \item 该形式化由 Harmonic 的 Aristotle 完成。
+\end{itemize}
+该文件共有 1116 行，包含 8 个定义、42 个引理，以及 5 个有名称的定理：
+\begin{itemize}
+  \item \texttt{erdos\_f\_upper\_bound}；
+  \item \texttt{large\_3maxA\_version}；
+  \item \texttt{erdos\_f\_lower\_bound}；
+  \item \texttt{erdos\_f\_eq}；
+  \item \texttt{erdos\_f\_eq\_ge4}。
+\end{itemize}
+这 5 个结果分别对应定理~3.1、注~3.3、定理~4.1、定理~2.1 和注~2.2。
+
+有关 Lean 和 Mathlib 的背景，参见文献\cite{ref5,ref13}。
+
+\begin{thebibliography}{99}
+\addcontentsline{toc}{chapter}{参考文献}
+
+\bibitem{ref1}
+T. Achim et al.,
+\emph{Aristotle: IMO-level Automated Theorem Proving}
+（Aristotle：国际数学奥林匹克竞赛水平的自动定理证明），
+arXiv:2510.01346 [cs.AI], 2025.
+doi:\href{https://doi.org/10.48550/arXiv.2510.01346}{10.48550/arXiv.2510.01346}.
+
+\bibitem{ref2}
+T. F. Bloom,
+\emph{Erdős Problem \#650}（Erdős 第 650 号问题），
+\url{https://www.erdosproblems.com/650}，访问日期：2026-03-30。
+
+\bibitem{ref3}
+T. F. Bloom,
+\emph{Erdős Problem \#650: discussion thread}
+（Erdős 第 650 号问题：讨论帖），
+\url{https://www.erdosproblems.com/forum/thread/650}，访问日期：2026-03-30。
+
+\bibitem{ref4}
+J. A. Bondy and U. S. R. Murty,
+\emph{Graph Theory}（图论），
+Graduate Texts in Mathematics, Vol.~244, Springer, New York, 2008.
+
+\bibitem{ref5}
+The mathlib Community,
+The Lean mathematical library（Lean 数学库），
+载于 \emph{Proceedings of the 9th ACM SIGPLAN International Conference on Certified Programs and Proofs (CPP 2020)}
+（第九届 ACM SIGPLAN 认证程序与证明国际会议论文集），
+ACM, 2020, 367--381.
+
+\bibitem{ref6}
+W. van Doorn,
+\emph{ErdosProblem650.lean}，GitHub 代码仓库，
+\url{https://github.com/Woett/Lean-files/blob/main/ErdosProblem650.lean}，
+访问日期：2026-03-30。
+
+\bibitem{ref7}
+P. Erdős,
+Problems and results in combinatorial analysis and combinatorial number theory
+（组合分析与组合数论中的问题和结果），
+载于 \emph{Proceedings of the Ninth Southeastern Conference on Combinatorics, Graph Theory and Computing}
+（第九届东南组合数学、图论与计算会议论文集），
+(Florida Atlantic Univ., Boca Raton, Fla., 1978),
+\emph{Congress. Numer.} XXI (1978), 29--40.
+
+\bibitem{ref8}
+P. Erdős,
+Some problems on number theory（数论中的若干问题），
+载于 \emph{Analytic and Elementary Number Theory}
+（解析数论与初等数论），(Marseille, 1983),
+\emph{Publ. Math. Orsay} 86 (1986), 53--67.
+
+\bibitem{ref9}
+P. Erdős,
+Some problems on number theory（数论中的若干问题），
+\emph{Octogon Math. Mag.} 3 (1995), 3--5.
+
+\bibitem{ref10}
+P. Erdős and J. Surányi,
+Megjegyzések egy versenyfeladathoz（关于一道竞赛题的注记），
+\emph{Mat. Lapok} 10 (1959), 39--48.
+
+\bibitem{ref11}
+Harmonic,
+\emph{Aristotle}，
+\url{https://aristotle.harmonic.fun/}，访问日期：2026-03-30。
+
+\bibitem{ref12}
+G. A. Jones and J. M. Jones,
+\emph{Elementary Number Theory}（初等数论），
+Springer Undergraduate Mathematics Series,
+Springer-Verlag London, London, 1998.
+
+\bibitem{ref13}
+L. de Moura and S. Ullrich,
+The Lean 4 theorem prover and programming language
+（Lean 4 定理证明器与编程语言），
+载于 \emph{Automated Deduction---CADE 28}
+（自动演绎：第 28 届 CADE 会议），
+LNAI 12699, Springer, 2021, 625--635.
+
+\bibitem{ref14}
+OpenAI,
+\emph{GPT-5}，
+\url{https://openai.com/gpt-5/}，访问日期：2026-03-30。
+
+\bibitem{ref15}
+Q. Tang,
+A Note on Problem \#650（关于第 650 号问题的一则札记），
+GitHub 代码仓库文件，可获取于
+\url{https://github.com/QuanyuTang/erdos-problem-650/blob/main/650_lowerbound_v1.pdf}。
+
+\bibitem{ref16}
+Q. Tang,
+A Note on a Gap in Case 2 of the previous Lower-Bound Argument for Problem \#650
+（关于第 650 号问题此前下界论证中情形 2 的一个缺口的札记），
+GitHub 代码仓库文件，可获取于
+\url{https://github.com/QuanyuTang/erdos-problem-650/blob/main/gap_in_previous_proof.pdf}。
+
+\end{thebibliography}
+
+\bigskip
+\noindent 荷兰，格罗宁根。\\
+电子邮件：\href{mailto:wonterman1@hotmail.com}{\nolinkurl{wonterman1@hotmail.com}}
+
+\medskip
+\noindent 中国南京，东南大学数学学院，邮政编码 211189。\\
+电子邮件：\href{mailto:liyanyang1219@gmail.com}{\nolinkurl{liyanyang1219@gmail.com}}
+
+\medskip
+\noindent 中国西安，西安交通大学数学与统计学院，邮政编码 710049。\\
+电子邮件：\href{mailto:tang_quanyu@163.com}{\nolinkurl{tang_quanyu@163.com}}
+
+\end{document}
